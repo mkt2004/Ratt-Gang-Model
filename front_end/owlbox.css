@@ -1,0 +1,103 @@
+/* William Ervin
+ * owlbox.css
+ * version: 0.0.0
+ * 09.30.2026
+ * */
+
+body 
+{
+	font-family: sans-serif;
+	background-color: #ECE9E7;
+	font-weight: bold;
+	color: #050A30;
+}
+
+/* mobile application format */
+#app 
+{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+#logo 
+{
+	border-radius: 50%;
+	width: 10em;
+	height: 5em; 
+}
+
+#time_slot 
+{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5em;
+	font-size: 2em;
+}
+
+/* refresh button */
+#refresh 
+{
+	width: 2em;
+	height: 2em;
+	border-radius: 50%;
+	border: none;
+       	cursor: pointer;
+	padding: 0.3em;	
+}
+#refresh_btn 
+{
+	width: 1.5em;
+	height: 1.5em;
+	background-color: #050A30;
+	border-radius: 50%;
+}
+
+/* spin animation */
+#refresh.spin 
+{
+    animation: spin 0.6s linear;
+}
+/* spin parameters */
+@keyframes spin 
+{
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+#big_count 
+{
+	font-size: 10em;
+	font-family:"ChunkFive Regular", sans-serif;
+	color: #23426D;
+	margin: auto;
+}
+
+#rodents_killed 
+{
+	font-size: 2em;
+	margin: auto;
+}
+
+#recent_events 
+{
+	font-size: 2em;
+	flex-direction: row;
+	white-space: nowrap;
+	border: solid 0.5em;
+	border-radius: 30%;
+	border-color: #23426D;
+	background-color: #C8D1D9;
+
+}
+#events 
+{
+	width: 2em;
+	height: 14em;
+	border: solid 1em;
+	border-radius: 20%;
+	border-color: #23426D;
+}

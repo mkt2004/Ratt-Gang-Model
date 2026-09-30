@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<!--
+    by: William Ervin
+    name: owlbox.html
+    version:0.0.0
+    last modified: 09.30.2026
+
+    you can run this using the URL:
+    https://nrs-projects.humboldt.edu/~wpe4/capstone/owlbox.html
+
+-->
+
+<head>
+    	<title> owlbox.fun </title>
+    	<meta charset="utf-8" />
+
+    	<link href="owlbox.css" type="text/css" rel="stylesheet" />
+</head>
+
+<body>
+    	<!-- mobile application container --!>
+    	<div id="app">
+    
+    	<!-- static logo -->
+    	<h1>
+        	<img src="OwlBox.logo.png"  id="logo" />	
+    	</h1>
+
+    	<!-- Space for refresh button and updateTime() output --!>
+    	<div id="time_slot">
+    		<div id="date_time"></div>
+    		<button type="button" id="refresh" onclick= "spinAndUpdate()">
+	    		<img id="refresh_btn" src="refresh.png" />
+        	</button>
+    	</div>
+
+    	<!-- Javascript Functions--!>
+    	<script>
+
+	// function to load and format current date and time
+	function updateTime() 
+	{
+		const now = new Date();
+		const month = now.toLocaleString("en-US", 
+			{month: "short" });
+		const day = now.getDate();
+		let hours = now.getHours();
+		const minutes = now.getMinutes().toString().padStart(2, "0");
+		const ampm = hours >= 12 ? "pm" : "am";
+		hours = hours % 12 || 12;
+		const format = `${month} ${day} ${hours}:${minutes}${ampm}`;
+		document.getElementById("date_time").textContent = format;
+	}
+
+	// function to prompt button spin and call other functions
+	function spinAndUpdate() 
+	{
+		const btn = document.getElementById("refresh");
+		btn.classList.add("spin");
+		setTimeout(() => btn.classList.remove("spin"), 600);
+		updateTime();
+		showLastRefresh();
+	}
+
+	// function to save each time page is unloaded
+	function saveLastRefresh() 
+	{
+		const now = new Date();
+		localStorage.setItem("lastRefresh", now.toISOString());
+	}
+
+	// function to format and output last  date and time
+	function showLastRefresh() 
+	{
+	        const last = localStorage.getItem("lastRefresh");
+		if (!last) return;
+		const date = new Date(last);
+		const month = date.getMonth() + 1;
+		const day = date.getDate();
+		let hours = date.getHours();
+		const minutes = date.getMinutes().toString().padStart(2, "0");
+		const ampm = hours >= 12 ? "pm" : "am";
+		hours = hours %12 || 12;
+		const format = `since ${hours}:${minutes}${ampm} ${month}/${day}`;
+		document.getElementById("last_time").textContent = format;
+	}
+	updateTime();
+	window.addEventListener("load", showLastRefresh);
+	window.addEventListener("beforeunload", saveLastRefresh);
+	</script>
+    
+   	<!-- value output of machine learning model -->
+    	<p id="big_count"> 5 </p>
+    	<!-- <div id="ml_output"></div> --!>
+
+    	<p id="rodents_killed"> Rodents Killed </p>
+
+    	<div id="last_time"></div>
+
+    	<fieldset id="events">
+    		<legend id="recent_events"> Recent Events </legend>
+
+    	</fieldset>
+    
+    	<footer>
+    	<hr />
+    	<p>
+        Validate by pasting .xhtml copy's URL into<br />
+	<a href="https://validator.w3.org/nu">
+            https://validator.w3.org/nu
+        </a>
+	or  
+        <a href="https://html5.validator.nu/">
+            https://html5.validator.nu/
+        </a>
+    	</p>
+    	</footer>
+    	</div>
+</body>
+</html>
+
+
