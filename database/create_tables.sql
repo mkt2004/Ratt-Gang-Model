@@ -1,7 +1,7 @@
 /*
     by: Audrey Fellows
     name: create_tables.sql
-    version: 0.1.0
+    version: 0.1.1
     last modified: 11/3/2026
 */
 
@@ -17,9 +17,9 @@ CREATE TABLE users
     USER_ID             INTEGER GENERATED ALWAYS AS IDENTITY,
     first_name          VARCHAR2(50) NOT NULL,
     last_name           VARCHAR2(50) NOT NULL,
-    email               VARCHAR2(255) NOT NULL UNIQUE,
+    email               VARCHAR2(255) UNIQUE NOT NULL,
     password_hash       VARCHAR2(255),
-    role                VARCHAR2(6) NOT NULL DEFAULT 'farmer'
+    role                VARCHAR2(6) DEFAULT 'farmer' NOT NULL
                         CHECK (role IN ('farmer', 'dev', 'admin')),
     created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     PRIMARY KEY         (user_id)
