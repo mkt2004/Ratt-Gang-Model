@@ -1,0 +1,4 @@
+clip,source,start_sec,end_sec,bird_hits,max_conf
+Ber2_Night2_124c03_000045s.mp4,footage\Ber2_Night2.mp4,45.5,57.5,26,0.401
+Ber2_Night2_124c03_000057s.mp4,footage\Ber2_Night2.mp4,57.5,69.5,26,0.401
+Ber2_Night2_124c03_000069s.mp4,footage\Ber2_Night2.mp4,69.5,75.5,26,0.401
