@@ -6,7 +6,7 @@ Nearby hits get merged into evets, are padded, and are cut into clips for the ne
 
 Usage:
     python MotionPrefilter.py -i ./footage -o ./owl_candidates
-    python MotionPrefilter.py --probe "train/0/Dev15_Night4_V1-0002.mov"
+    python MotionPrefilter.py --probe "footage/Ber2_Night2.mp4"
 """
 
 import argparse, csv, hashlib, shutil, subprocess, sys
@@ -78,7 +78,7 @@ def build_windows(hits, duration, a):
 
 def cut_clip(src, dst, start, end):
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", f"{start:.2f}",
-                    "-i", str(src), "-t" f"{end - start:.2f}", "-an",
+                    "-i", str(src), "-t", f"{end - start:.2f}", "-an",
                     "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", str(dst)],
                     check=True)
 
@@ -106,4 +106,69 @@ def main():
     p.add_argument("--sample_every", type=float, default=0.25, help="seconds between frames compared")
     p.add_argument("--width", type=int, default=320, help="downscale width for analysis")
     p.add_argument("--pixel-thresh", type=int, default=25, help="gray-level change that counts as motion")
-    p.add_argument
+    p.add_argument("--min-frac", type=float, default=0.002, help="fraction of pixels that must change")
+    p.add_argument("--max-frac", type=float, default=0.6, help="above this = lighting change, ignored")
+    p.add_argument("--min-hits", type=int, default=2)
+    p.add_argument("--merge-gap", type=float, default=5.0)
+    p.add_argument("--pre", type=float, default=3.0)
+    p.add_argument("--post", type=float, default=4.0)
+    p.add_argument("--max-clip", type=float, default=12.0)
+    p.add_argument("--workers", type=int, default=0, help="0 = CPU count minus 1")
+    args = p.parse_args()
+    a = vars(args)
+
+    if args.probe:
+        hits, dur, scores = scan_video(args.probe, a)
+        s = np.array(scores)
+        print(f"duration {dur:.0f}s, {len(s)} comparisons, {len(hits)} hits "
+              f"({100 * len(hits) / max(1, len(s)):.1f}% of samples)")
+        print("score percentiles 50/90/95/99/max:",
+              [round(float(np.percentile(s, q)), 4) for q in (50, 90, 95, 99, 100)])
+        print("events:", len(build_windows(hits, dur, a)))
+        return
+
+    if not (args.input_dir and args.output_dir):
+        sys.exit("need --input_dir and --output_dir (or --probe)")
+    if shutil.which("ffmpeg") is None:
+        sys.exit("ffmpeg not found on PATH")
+
+    (args.output_dir / "candidates").mkdir(parents=True, exist_ok=True)
+    manifest_path = args.output_dir / "manifest.csv"
+    processed_path = args.output_dir / "processed.txt"
+    done = set(processed_path.read_text().splitlines()) if processed_path.exists() else set()
+    videos = [str(v) for v in sorted(args.input_dir.rglob("*"))
+              if v.is_file() and v.suffix.lower() in VIDEO_EXTS and str(v) not in done]
+    print(f"{len(videos)} videos to scan ({len(done)} already done)")
+    if not videos:
+        return
+
+    import os
+    workers = args.workers or max(1, (os.cpu_count() or 2) - 1)
+    fields = ["clip", "source", "start_sec", "end_sec", "motion_hits", "max_motion"]
+    new = not manifest_path.exists()
+    total = kept = 0.0
+    n_clips = 0
+
+    with open(manifest_path, "a", newline="") as mf, open(processed_path, "a") as pf, \
+        ProcessPoolExecutor(max_workers=workers) as ex:
+        w = csv.DictWriter(mf, fieldnames=fields)
+        if new:
+            w.writeheader()
+        futs = [ex.submit(process_video, v, a) for v in videos]
+        for fut in tqdm(as_completed(futs), total=len(futs), unit="video"):
+            path_str, dur, rows, err = fut.result()
+            if err:
+                tqdm.write(f"FAILED {path_str}: {err}")
+                continue
+            w.writerows(rows)
+            pf.write(path_str + "\n")
+            mf.flush(); pf.flush()
+            total += dur
+            n_clips += len(rows)
+            kept += sum(r["end_sec"] - r["start_sec"] for r in rows)
+
+    print(f"\nScanned {total / 3600:.2f} h, kept {n_clips} clips ({kept / 60:.1f} min)"
+          f" = {100 * kept / max(1, total):.1f}% of footage")
+
+if __name__ == "__main__":
+    main()
