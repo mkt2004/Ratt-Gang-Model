@@ -1,4 +1,8 @@
-clip,source,start_sec,end_sec,bird_hits,max_conf
-Ber2_Night2_124c03_000045s.mp4,footage\Ber2_Night2.mp4,45.5,57.5,26,0.401
-Ber2_Night2_124c03_000057s.mp4,footage\Ber2_Night2.mp4,57.5,69.5,26,0.401
-Ber2_Night2_124c03_000069s.mp4,footage\Ber2_Night2.mp4,69.5,75.5,26,0.401
+clip,source,start_sec,end_sec,motion_hits,max_motion
+Ber2_Night2_124c03_000022s.mp4,footage\Ber2_Night2.mp4,22.33,34.33,24,0.3414
+Ber2_Night2_124c03_000034s.mp4,footage\Ber2_Night2.mp4,34.33,38.67,24,0.3414
+Ber2_Night2_124c03_000038s.mp4,footage\Ber2_Night2.mp4,38.6,46.13,3,0.0589
+Ber2_Night1_1a066a_000025s.mp4,footage\Ber2_Night1.mp4,25.53,37.53,22,0.0262
+Ber2_Night1_1a066a_000037s.mp4,footage\Ber2_Night1.mp4,37.53,42.67,22,0.0262
+Ber2_Night1_1a066a_000052s.mp4,footage\Ber2_Night1.mp4,52.2,64.2,36,0.1071
+Ber2_Night1_1a066a_000064s.mp4,footage\Ber2_Night1.mp4,64.2,72.0,36,0.1071

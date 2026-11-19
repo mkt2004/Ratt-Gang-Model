@@ -9,7 +9,7 @@ Outputs
 
 Requires: ultralytics, opencv-python, torch, tqdm, and the ffmpeg binary on PATH
 
-To Run: py RatMotionDetection.py --input_dir "./footage" --output_dir ./owl_candidates """
+To Run: python RatMotionDetection.py --input_dir "./footage" --output_dir ./owl_candidates """
 
 import argparse
 import csv
@@ -27,7 +27,7 @@ from tqdm import tqdm
 from ultralytics import YOLO
 
 VIDEO_EXTS = {".mp4", ".mov", ".avi", ".mkv"}
-BIRD_CLASS = 14, 33
+ANIMAL_CLASS = [14, 15, 16, 17, 18, 19, 20, 21, 33, 77]
 
 # Per-worker globals, set once in init_worker so the model loads once per process 
 _model = None
@@ -59,7 +59,7 @@ def scan_video(path):
         if not batch:
             return
         results = _model.predict(
-            batch, device=_device, classes=[BIRD_CLASS], conf=_args.conf,
+            batch, device=_device, classes=ANIMAL_CLASS, conf=_args.conf,
             imgsz=_args.imgsz, half=use_half, verbose=False,
         )
         for t, r in zip(times, results):
